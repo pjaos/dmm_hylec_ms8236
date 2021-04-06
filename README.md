@@ -76,7 +76,7 @@ It is possible to plot the DMM status of the DMM output as shown below.
 dmm --log /tmp/log.txt --plot -r 0,6
 ```
 
-While the above output is displayed on in the terminal window a GUI will report the value on the DMM .
+While the above output is displayed on in the terminal window a GUI (in a web browser window) will report the value on the DMM in real time.
 
 ![Overview](images/dmm_plot.png "Plotting data from the DMM")
 
