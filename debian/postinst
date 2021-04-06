@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "************************************"
+echo "* The dmm command is now available *"
+echo "* 'dmm -h' for command line help   *"
+echo "************************************"

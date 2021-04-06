@@ -1,0 +1,8 @@
+Package: python-ms8236
+Section: Python
+Priority: optional
+Architecture: amd64
+Essential: no
+Maintainer: Paul Austen <pausten.os@gmail.com>
+Description: Provides the ability to log and plot data from a Hylec MS8236 Digital Multimeter.
+Version: 1.1
