@@ -10,6 +10,7 @@ import  threading
 import  asyncio
 import  queue
 import  traceback
+import  tempfile
 
 from time import sleep
 from datetime import datetime
@@ -22,7 +23,7 @@ from bokeh.models import Range1d
 from bokeh.layouts import gridplot
 
 from    open_source_libs.p3lib.uio import UIO
-from    open_source_libs.p3lib.helper import logTraceBack, getHomePath, appendCreateFile
+from    open_source_libs.p3lib.helper import logTraceBack, appendCreateFile
 
 class Reading(object):
     """@brief Resonsible for holding a reading value."""
@@ -42,7 +43,8 @@ class Plotter(object):
     def __init__(self, label, yRangeLimits=[], bokehPort=5001):
         """@brief Constructor.
            @param label The label associated with the trace to plot.
-            @param yRangeLimits Limits of the Y axis. By default auto range."""
+           @param yRangeLimits Limits of the Y axis. By default auto range.
+           @param bokehPort The TCP IP port for the bokeh server."""
         self._label=label
         self._yRangeLimits=yRangeLimits
         self._bokehPort=bokehPort
@@ -100,8 +102,8 @@ class HYLEC_MS8236(object):
     """@brief Responsible for logging data from the HYLEC MS8236 DMM"""
         
     DEFAULT_SERIAL_PORT = "/dev/ttyUSB0"
-    CFG_FILENAME        = "hylec_ms8236.log"
-    DEFAULT_LOG_FILE    = os.path.join( getHomePath(), CFG_FILENAME)
+    LOG_FILENAME        = "dmm.log"
+    DEFAULT_LOG_FILE    = os.path.join( tempfile.gettempdir(), LOG_FILENAME)
     DIGIT_VALUE_LIST    = [ 0x00,0x5f,0x06,0x6b,0x2f,0x36,0x3d,0x7d,0x07,0x7f,0x3f,0x58 ]
     DIGIT_STR_LIST      = [ "" , "0", "1", "2", "3", "4", "5", "6", "7", "8", "9","L" ]
     MSG_ID_0            = 0xaa
@@ -115,9 +117,7 @@ class HYLEC_MS8236(object):
         self._uio = uio
         self._options = options
         
-        self._serial = None
-        self._fd = None
-        
+        self._serial = None       
         self._plotter = None
 
     def _openSerialPort(self):
@@ -177,11 +177,9 @@ class HYLEC_MS8236(object):
            @param label The label associated with the value that defines the measurement value."""
         timeStr = datetime.now().strftime("%d/%m/%Y-%H:%M:%S.%f")
         self._uio.info("{}: {} {}".format(timeStr, value, label))
-        if not self._fd:
-            self._fd = open(self._options.log, 'a')
-        self._fd.write("{}: {} {}\n".format(timeStr, value, label))
-        self._fd.close()
-        self._fd = None
+        fd = open(self._options.log, 'a')
+        fd.write("{}: {} {}\n".format(timeStr, value, label))
+        fd.close()
      
     def _getYRange(self):
         """@brief Get the Y range.
