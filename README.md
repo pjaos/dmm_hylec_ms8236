@@ -27,7 +27,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -d, --debug           Enable debugging.
   -p PORT, --port PORT  Serial port (default=/dev/ttyUSB0).
-  -l LOG, --log LOG     Log file (default=/home/pja/hylec_ms8236.log).
+  -l LOG, --log LOG     Log file (default=/tmp/dmm.log).
   -t, --plot            Plot data in real time.
   -f, --fplot           Plot data from log file.
   -r RANGE, --range RANGE
