@@ -311,9 +311,6 @@ class HYLEC_MS8236(object):
 
         finally:
             
-            if self._fd:
-                self._fd.close()
-
             if self._serial:
                 self._serial.close()
                 
