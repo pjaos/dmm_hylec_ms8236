@@ -1,3 +1,0 @@
-[submodule "open_source_libs/p3lib.git"]
-	path = open_source_libs/p3lib.git
-	url = git@github.com:pjaos/p3lib.git

@@ -103,11 +103,11 @@
         },
         "p3lib": {
             "hashes": [
-                "sha256:6e17c91808ca7d53ee358da549850c834d1061d462c78a0dc54a0a83a9bc9976",
-                "sha256:f993a63f80d677e88d684b0f6081c3b24870c5dd5e8af4447a9bcb9bd0dbf1d3"
+                "sha256:e68b5e6568b100c45f52e02102beb2258836ed6cb2baff831da8192b806c57be",
+                "sha256:fcc3a27255f946f16ca70917eeaa73295ddda8af650096d0c01dca216704adc6"
             ],
             "index": "pypi",
-            "version": "==1.1.10"
+            "version": "==1.1.11"
         },
         "packaging": {
             "hashes": [

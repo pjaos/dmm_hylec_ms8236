@@ -6,17 +6,16 @@ The tool is written in python.
 Currently an installer is available for Linux systems. The python code should run on Windows but has not been tested and no installer currently exists for a Windows platform.
 
 ## Installing the debian package
-- Download the packages/python-ms8236-1.1-all.deb. The version (currently 1.1) of the package may change.
+- Download the packages/python-ms8236-1.4-all.deb. The version (currently 1.4) of the package may change.
 - Install the package from a terminal window on your machine as shown below.
 ```
-sudo dpkg -i python-ms8236-1.1-all.deb
+sudo dpkg -i python-ms8236-1.4-all.deb
 ```
 
 #Running the dmm command
 Once installed the dmm command is available on the command line. The dmm command has command line help as shown below.
 
 ```
-dmm -h
 usage: dmm.py [-h] [-d] [-p PORT] [-l LOG] [-t] [-f] [-r RANGE]
 
 Log data from the HYLEC MS8236 DMM.
@@ -73,15 +72,15 @@ INFO:  06/04/2021-18:50:04.954559: 5.439 V DC Auto
 It is possible to plot the DMM status of the DMM output as shown below.
 
 ```
-dmm --log /tmp/log.txt --plot -r 0,6
+dmm --log /tmp/log.txt --plot
 ```
 
 While the above output is displayed on in the terminal window a GUI (in a web browser window) will report the value on the DMM in real time.
 
-![Overview](images/dmm_plot.png "Plotting data from the DMM")
+![Overview](images/dmm_plot_2.png "Plotting data from the DMM")
 
 # Python
-This software requires that python3.8 is installed on the host computer. 
+This software requires that python3.8 or later is installed on the host computer. 
 Python3.8 can be installed on Debian based machines using the following steps.
 
 ```
@@ -97,15 +96,15 @@ sudo make altinstall
 
 # Building debian package
 
-pipenv2deb must be installed in order to build this package. See https://github.com/pjaos/pipenv2deb for details.
+pipenv2deb must be installed in order to build this package. This can be installed using pip ('pip install pipenv2deb').
+
+To build the package run the following command.
 
 ```
-sudo pipenv2deb --rpm --tgz
-INFO:  Removed build path
+sudo ./build.sh 
 INFO:  Set executable attribute: create_pip_env.sh
 INFO:  Created build/DEBIAN
 INFO:  Created build/usr/local/bin/python-ms8236.pipenvpkg
-INFO:  Copied /scratch/git_repos/python3/dmm_hylec_ms8236/open_source_libs to build/usr/local/bin/python-ms8236.pipenvpkg/open_source_libs
 INFO:  Copied /scratch/git_repos/python3/dmm_hylec_ms8236/images to build/usr/local/bin/python-ms8236.pipenvpkg/images
 INFO:  Copied Pipfile to build/usr/local/bin/python-ms8236.pipenvpkg
 INFO:  Copied Pipfile.lock to build/usr/local/bin/python-ms8236.pipenvpkg
@@ -117,15 +116,18 @@ INFO:  Set executable attribute: build/DEBIAN/control
 INFO:  Set executable attribute: build/DEBIAN/postinst
 INFO:  Created: build/usr/local/bin/dmm
 INFO:  Set executable attribute: build/usr/local/bin/dmm
-INFO:  Executing: dpkg-deb -Zgzip -b build packages/python-ms8236-1.1-amd64.deb
-dpkg-deb: building package 'python-ms8236' in 'packages/python-ms8236-1.1-amd64.deb'.
-INFO:  Executing: sudo alien --to-rpm --scripts python-ms8236-1.1-amd64.deb
-python-ms8236-1.1-2.x86_64.rpm generated
+INFO:  Executing: dpkg-deb -Zgzip -b build packages/python-ms8236-1.4-amd64.deb
+dpkg-deb: building package 'python-ms8236' in 'packages/python-ms8236-1.4-amd64.deb'.
+INFO:  Executing: sudo alien --to-rpm --scripts python-ms8236-1.4-amd64.deb
+python-ms8236-1.4-2.x86_64.rpm generated
 INFO:  Created rpm file from deb
-INFO:  Executing: sudo alien --to-tgz --scripts python-ms8236-1.1-amd64.deb
-python-ms8236-1.1.tgz generated
+INFO:  Executing: sudo alien --to-tgz --scripts python-ms8236-1.4-amd64.deb
+python-ms8236-1.4.tgz generated
 INFO:  Created tgz file from deb
 INFO:  Removed build path
 ```
 
-This leaves a *.deb, *.rpm and a *.tgz file in the packages folder. The installation of the *.deb and *.rpm files is detailed above. The *.tgz file could be used as the basis for an installer on other platforms (E.G  Windows).
+This leaves a *.deb, *.rpm and a *.tgz file in the packages folder. 
+
+The installation of the *.deb and *.rpm files is detailed above. deb files can be installed from the command line using 'sudo dpkg -i <filename>'. rpm files can be installed from the command line using 'sudo rpm -Uvh <filename>'. The *.tgz file could be used as the basis for an installer on other platforms (E.G  Windows).
+

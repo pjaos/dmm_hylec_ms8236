@@ -16,9 +16,8 @@ from time import sleep
 from datetime import datetime
 
 from   p3lib.bokeh_gui import TimeSeriesPlotter
-
-from    open_source_libs.p3lib.uio import UIO
-from    open_source_libs.p3lib.helper import logTraceBack, appendCreateFile
+from   p3lib.uio import UIO
+from   p3lib.helper import logTraceBack, appendCreateFile
 
 class Reading(object):
     """@brief Resonsible for holding a reading value."""
