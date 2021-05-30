@@ -15,12 +15,7 @@ import  tempfile
 from time import sleep
 from datetime import datetime
 
-from bokeh.server.server import Server
-from bokeh.application import Application
-from bokeh.application.handlers.function import FunctionHandler
-from bokeh.plotting import figure, ColumnDataSource
-from bokeh.models import Range1d
-from bokeh.layouts import gridplot
+from   p3lib.bokeh_gui import TimeSeriesPlotter
 
 from    open_source_libs.p3lib.uio import UIO
 from    open_source_libs.p3lib.helper import logTraceBack, appendCreateFile
@@ -51,18 +46,6 @@ class Plotter(object):
         self._source = ColumnDataSource({'x': [], 'y': [], 'color': []})
         self._evtLoop = None
         self._queue = queue.Queue()
-        
-    def runBokehServer(self):
-        """@brief Run the bokeh server. This is a blocking method."""
-        apps = {'/': Application(FunctionHandler(self._createPlot))}
-        #As this gets run in a thread we need to start an event loop
-        evtLoop = asyncio.new_event_loop()
-        asyncio.set_event_loop(evtLoop)
-        server = Server(apps, port=self._bokehPort)
-        server.start()
-        #Show the server in a web browser window
-        server.io_loop.add_callback(server.show, "/")
-        server.io_loop.start()
         
     def _createPlot(self, doc, ):
         """@brief create a plot figure.
@@ -200,13 +183,14 @@ class HYLEC_MS8236(object):
         """@brief Send a value to be plotted."""
         if self._options.plot:
             if not self._plotter:
-                self._plotter = Plotter(label, self._getYRange())
-                bt = threading.Thread(target=self._plotter.runBokehServer)
-                bt.setDaemon(True)
-                bt.start()
+                self._plotter = TimeSeriesPlotter("Hylec DMM Plot", bokehPort=9092)
+                fig1 = TimeSeriesPlotter.GetFigure("", label, width=1024)
+                self._plotter.addTrace(fig1, label)
+                self._plotter.addToRow(fig1)
+                self._plotter.runNonBlockingBokehServer()
 
-            self._plotter.addValue(value)
-                
+            self._plotter.addValue(0, value)
+                        
     def _processRXData(self, rxValueList):
         """@brief Process a data from from the meter.
            @param rxValueList A list of values received from the meter.""" 
@@ -268,33 +252,34 @@ class HYLEC_MS8236(object):
 
         return (xValueList, yValueList, label)
         
-    def _plotFromLog(self):
+    def plotFromLog(self):
         """@brief Plot data from the log file."""
         if not os.path.isfile(self._options.log):
             raise Exception("{} file not found".format(self._options.log))
         xValueList, yValueList, label = self._loadLog()
         if len(xValueList) != len(yValueList):
             raise Exception("X/Y Len eror {}/{}".format(len(xValueList),len(yValueList)))
-        self._plotter = Plotter(label, self._getYRange())
-        bt = threading.Thread(target=self._plotter.runBokehServer)
-        bt.setDaemon(True)
-        bt.start()
+        
+        self._plotter = TimeSeriesPlotter("Hylec DMM Plot", bokehPort=9092, topCtrlPanel=False)
+        fig1 = TimeSeriesPlotter.GetFigure("", label, width=1024)
+        self._plotter.addTrace(fig1, label)
+        self._plotter.addToRow(fig1)
         for index in range(0,len(xValueList)):
-            self._plotter.addValue(yValueList[index], xValueList[index])
+            self._plotter.addValue(0, yValueList[index], timeStamp=xValueList[index])
             index=index+1
-        bt.join()
+        self._plotter.runBokehServer()
+
         
     def log(self):
         """@brief Log data from the DMM. """
-        if self._options.fplot:
-            self._plotFromLog()
-            return
-        
+       
         appendCreateFile(self._uio, self._options.log)
         self._uio.info("LOG: {}".format(self._options.log))
         try:
             rxValueList = []
             self._openSerialPort()
+            loggingData = False
+            self._uio.info("Press and hold the REL/USB button on the Hylec MS8236 DMM.")
             while True:
                 val = int.from_bytes( self._serial.read(1) , "big")
 
@@ -307,6 +292,9 @@ class HYLEC_MS8236(object):
                     rxValueList.pop()
                     
                 if len(rxValueList) == 22:
+                    if not loggingData:
+                        self._uio.info("Receiving data from the Hylec MS8236 DMM.")
+                        loggingData = True
                     self._processRXData(rxValueList)
 
         finally:
@@ -341,7 +329,11 @@ def main():
 
         uio.enableDebug(options.debug)
         hylecMS8236 = HYLEC_MS8236(uio, options)
-        hylecMS8236.log()
+        
+        if options.fplot:
+            hylecMS8236.plotFromLog()
+        else:
+            hylecMS8236.log()
 
     #If the program throws a system exit exception
     except SystemExit:
