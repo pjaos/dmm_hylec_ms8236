@@ -1,5 +1,5 @@
 # HYLEC MS8236 Data Logging Tool
-This project provides a command line tool to record and polt data from the HYLEC MS8236 Digital MultiMeter.
+This project provides a command line tool to record and plot data from the HYLEC MS8236 Digital MultiMeter.
 The tool is written in python.
 
 # Installation
@@ -12,7 +12,7 @@ Currently an installer is available for Linux systems. The python code should ru
 sudo dpkg -i python-ms8236-1.4-all.deb
 ```
 
-#Running the dmm command
+# Running the dmm command
 Once installed the dmm command is available on the command line. The dmm command has command line help as shown below.
 
 ```
