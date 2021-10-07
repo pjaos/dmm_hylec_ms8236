@@ -5,4 +5,4 @@ Architecture: amd64
 Essential: no
 Maintainer: Paul Austen <pausten.os@gmail.com>
 Description: Provides the ability to log and plot data from a Hylec MS8236 Digital Multimeter.
-Version: 1.4
+Version: 1.5
